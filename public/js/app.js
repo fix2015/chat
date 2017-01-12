@@ -80,7 +80,6 @@ var ChatApp = React.createClass({
 
 		var oldName = this.state.user;
 		socket.emit('set:name', { name: newName, location: this.state.mapCoordinates }, function (result) {
-			debugger;
 			if (!result) {
 				return alert('There was an error changing your name');
 			}
@@ -124,7 +123,7 @@ var ChatApp = React.createClass({
 					React.createElement(
 						'div',
 						{ className: 'panel-heading' },
-						'RECENT CHAT HISTORY'
+						'CHAT'
 					),
 					React.createElement(
 						'div',
@@ -148,7 +147,7 @@ var ChatApp = React.createClass({
 					React.createElement(
 						'div',
 						{ className: 'panel-heading' },
-						'ONLINE USERS'
+						'Map'
 					),
 					React.createElement(
 						'div',
@@ -193,7 +192,7 @@ var Map = React.createClass({
         });
 
         var bounds = [];
-
+        debugger;
         this.props.locations.forEach(function (data, key) {
             map.addMarker({
                 lat: data.location.lat,
