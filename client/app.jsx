@@ -44,6 +44,7 @@ var ChatApp = React.createClass({
 	componentDidMount() {
 		socket.on('init', this._initialize);
 		socket.on('send:message', this._messageRecieve);
+		socket.on('keypress:event', this._messageWriting);
 		var userName = localStorage.getItem('userName');
 		if(userName){
 			this.handleSetName(userName);
@@ -56,10 +57,14 @@ var ChatApp = React.createClass({
 		this.setState({locations : locations});
 	},
 
+	_messageWriting(data) {
+		this.setState({active:data.user});
+	},
+
 	_messageRecieve(message) {
 		var {messages} = this.state;
 		messages.push(message);
-		this.setState({messages, active:message.user});
+		this.setState({messages, active:''});
 	},
 
 	handleMessageSubmit(message) {
@@ -89,6 +94,10 @@ var ChatApp = React.createClass({
 		});
 	},
 
+	handleKeypressSubmit(){
+		socket.emit('keypress:message', {user: this.state.user});
+	},
+
 	render() {
 		return (
 
@@ -109,6 +118,7 @@ var ChatApp = React.createClass({
 							/>
 						</div>
 						<MessageForm
+							onKeypressEvent={this.handleKeypressSubmit}
 							onMessageSubmit={this.handleMessageSubmit}
 							user={this.state.user}
 						/>

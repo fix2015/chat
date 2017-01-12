@@ -46,6 +46,7 @@ var ChatApp = React.createClass({
 	componentDidMount: function componentDidMount() {
 		socket.on('init', this._initialize);
 		socket.on('send:message', this._messageRecieve);
+		socket.on('keypress:event', this._messageWriting);
 		var userName = localStorage.getItem('userName');
 		if (userName) {
 			this.handleSetName(userName);
@@ -61,11 +62,15 @@ var ChatApp = React.createClass({
 		this.setState({ locations: locations });
 	},
 
+	_messageWriting: function _messageWriting(data) {
+		this.setState({ active: data.user });
+	},
+
 	_messageRecieve: function _messageRecieve(message) {
 		var messages = this.state.messages;
 
 		messages.push(message);
-		this.setState({ messages: messages, active: message.user });
+		this.setState({ messages: messages, active: '' });
 	},
 
 	handleMessageSubmit: function handleMessageSubmit(message) {
@@ -97,6 +102,10 @@ var ChatApp = React.createClass({
 			localStorage.setItem('userName', newName);
 			socket.emit('send:message', { text: 'Welcome new user ' + newName });
 		});
+	},
+
+	handleKeypressSubmit: function handleKeypressSubmit() {
+		socket.emit('keypress:message', { user: this.state.user });
 	},
 
 	render: function render() {
@@ -134,6 +143,7 @@ var ChatApp = React.createClass({
 						})
 					),
 					React.createElement(MessageForm, {
+						onKeypressEvent: this.handleKeypressSubmit,
 						onMessageSubmit: this.handleMessageSubmit,
 						user: this.state.user
 					})
@@ -185,6 +195,9 @@ var Map = React.createClass({
 
     componentDidUpdate: function componentDidUpdate() {
         var self = this;
+        var bounds = [];
+        var markers = [];
+
         this.lastLat = this.props.lat;
         this.lastLng = this.props.lng;
 
@@ -197,13 +210,11 @@ var Map = React.createClass({
             zoom: 5
         });
 
-        var bounds = [];
-
         this.props.locations.forEach(function (data, key) {
-            map.addMarker({
+            markers.push(map.addMarker({
                 lat: data.location.lat,
                 lng: data.location.lng
-            });
+            }));
             bounds.push(new google.maps.LatLng(data.location.lat, data.location.lng));
         });
 
@@ -214,6 +225,15 @@ var Map = React.createClass({
                         lat: data.location.lat,
                         lng: data.location.lng
                     }).setAnimation(google.maps.Animation.BOUNCE);
+                }
+            });
+        } else {
+            this.props.locations.forEach(function (data, key) {
+                if (self.props.active == data.user) {
+                    map.addMarker({
+                        lat: data.location.lat,
+                        lng: data.location.lng
+                    }).setAnimation(null);
                 }
             });
         }
@@ -313,6 +333,10 @@ var MessageForm = React.createClass({
         this.setState({ text: '' });
     },
 
+    keypressHandler: function keypressHandler() {
+        this.props.onKeypressEvent();
+    },
+
     render: function render() {
         return React.createElement(
             'div',
@@ -323,7 +347,7 @@ var MessageForm = React.createClass({
                 React.createElement(
                     'form',
                     { onSubmit: this.handleSubmit },
-                    React.createElement('input', { onChange: this.changeHandler, value: this.state.text, placeholder: 'Sending msg ...' }),
+                    React.createElement('input', { onKeyPress: this.keypressHandler, onChange: this.changeHandler, value: this.state.text, placeholder: 'Sending msg ...' }),
                     React.createElement(
                         'button',
                         { type: 'button', onClick: this.sendMsg },

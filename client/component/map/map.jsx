@@ -11,7 +11,10 @@ var Map = React.createClass({
     },
 
     componentDidUpdate(){
-         var self = this;
+        var self = this;
+        var bounds = [];
+        var markers = [];
+
         this.lastLat = this.props.lat;
         this.lastLng = this.props.lng
 
@@ -24,13 +27,14 @@ var Map = React.createClass({
             zoom: 5
         });
 
-        var bounds = [];
+
+
 
         this.props.locations.forEach(function(data, key){
-            map.addMarker({
+            markers.push(map.addMarker({
                 lat: data.location.lat,
                 lng: data.location.lng
-            });
+            }));
             bounds.push(new google.maps.LatLng(data.location.lat, data.location.lng));
         })
 
@@ -41,6 +45,17 @@ var Map = React.createClass({
                         lat: data.location.lat,
                         lng: data.location.lng
                     }).setAnimation(google.maps.Animation.BOUNCE);
+
+                }
+            })
+        }else{
+            this.props.locations.forEach(function(data, key){
+                if(self.props.active==data.user) {
+                    map.addMarker({
+                        lat: data.location.lat,
+                        lng: data.location.lng
+                    }).setAnimation(null);
+
                 }
             })
         }

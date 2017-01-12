@@ -32,12 +32,16 @@ var MessageForm = React.createClass({
         this.setState({ text: '' });
     },
 
+    keypressHandler(){
+        this.props.onKeypressEvent();
+    },
+
     render() {
         return(
             <div className="panel-footer">
                 <div className="input-group">
                     <form onSubmit={this.handleSubmit}>
-                        <input onChange={this.changeHandler} value={this.state.text} placeholder="Sending msg ..."/>
+                        <input onKeyPress={this.keypressHandler} onChange={this.changeHandler} value={this.state.text} placeholder="Sending msg ..."/>
                         <button type="button"  onClick={this.sendMsg}>Send</button>
                     </form>
                 </div>
