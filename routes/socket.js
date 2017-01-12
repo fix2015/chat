@@ -45,14 +45,15 @@ var userNames = (function () {
   };
   // set location for user
   var setLocation = function (data) {
-    var flag = true;
+/* TODO   
+  var flag = true;
     locations.forEach(function(location, key){
       if(location.user == data.name){
         flag=false;
       }
     })
 
-    if(!flag){ return false; }
+    if(!flag){ return false; }*/
     locations.push({user: data.name, location: data.location});
     
     return locations;
