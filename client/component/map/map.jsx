@@ -24,7 +24,7 @@ var Map = React.createClass({
         });
 
         var bounds = [];
-        debugger
+        
         this.props.locations.forEach(function(data, key){
             map.addMarker({
                 lat: data.location.lat,
