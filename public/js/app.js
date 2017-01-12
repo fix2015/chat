@@ -25,6 +25,7 @@ var ChatApp = React.createClass({
 
 		return { users: [],
 			messages: [],
+			active: '',
 			login: false,
 			text: '',
 			locations: [],
@@ -64,7 +65,9 @@ var ChatApp = React.createClass({
 		var messages = this.state.messages;
 
 		messages.push(message);
-		this.setState({ messages: messages });
+
+		this.setState({ messages: messages, active: message.user });
+		debugger;
 	},
 
 	handleMessageSubmit: function handleMessageSubmit(message) {
@@ -105,7 +108,7 @@ var ChatApp = React.createClass({
 			React.createElement(
 				'h3',
 				{ 'class': 'text-center' },
-				'BOOTSTRAP CHAT EXAMPLE '
+				'CHAT'
 			),
 			React.createElement('br', null),
 			React.createElement('br', null),
@@ -152,7 +155,11 @@ var ChatApp = React.createClass({
 					React.createElement(
 						'div',
 						{ className: 'panel-body' },
-						React.createElement(Map, { lat: this.state.mapCoordinates.lat, lng: this.state.mapCoordinates.lng, locations: this.state.locations })
+						React.createElement(Map, {
+							active: this.state.active,
+							lat: this.state.mapCoordinates.lat,
+							lng: this.state.mapCoordinates.lng,
+							locations: this.state.locations })
 					)
 				)
 			)
@@ -179,7 +186,7 @@ var Map = React.createClass({
     },
 
     componentDidUpdate: function componentDidUpdate() {
-
+        var self = this;
         this.lastLat = this.props.lat;
         this.lastLng = this.props.lng;
 
@@ -188,7 +195,8 @@ var Map = React.createClass({
             lat: this.props.lat,
             lng: this.props.lng,
             width: '100%',
-            height: '325px'
+            height: '325px',
+            zoom: 5
         });
 
         var bounds = [];
@@ -201,6 +209,18 @@ var Map = React.createClass({
             bounds.push(new google.maps.LatLng(data.location.lat, data.location.lng));
         });
 
+        if (this.props.active) {
+            this.props.locations.forEach(function (data, key) {
+                if (self.props.active == data.user) {
+                    map.addMarker({
+                        lat: data.location.lat,
+                        lng: data.location.lng,
+                        icon: 'http://www.google.com/mapfiles/dd-start.png'
+                    });
+                }
+            });
+        }
+        debugger;
         map.fitLatLngBounds(bounds);
     },
 
@@ -288,6 +308,15 @@ var MessageForm = React.createClass({
         this.setState({ text: e.target.value });
     },
 
+    sendMsg: function sendMsg() {
+        var message = {
+            user: this.props.user,
+            text: this.state.text
+        };
+        this.props.onMessageSubmit(message);
+        this.setState({ text: '' });
+    },
+
     render: function render() {
         return React.createElement(
             'div',
@@ -298,11 +327,12 @@ var MessageForm = React.createClass({
                 React.createElement(
                     'form',
                     { onSubmit: this.handleSubmit },
-                    React.createElement('input', {
-                        onChange: this.changeHandler,
-                        value: this.state.text,
-                        placeholder: 'click Enter for sending msg'
-                    })
+                    React.createElement('input', { onChange: this.changeHandler, value: this.state.text, placeholder: 'Sending msg ...' }),
+                    React.createElement(
+                        'button',
+                        { type: 'button', onClick: this.sendMsg },
+                        'Send'
+                    )
                 )
             )
         );

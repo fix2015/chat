@@ -23,16 +23,22 @@ var MessageForm = React.createClass({
         this.setState({ text : e.target.value });
     },
 
+    sendMsg(){
+        var message = {
+            user : this.props.user,
+            text : this.state.text
+        }
+        this.props.onMessageSubmit(message);
+        this.setState({ text: '' });
+    },
+
     render() {
         return(
             <div className="panel-footer">
                 <div className="input-group">
                     <form onSubmit={this.handleSubmit}>
-                        <input
-                            onChange={this.changeHandler}
-                            value={this.state.text}
-                            placeholder="click Enter for sending msg"
-                        />
+                        <input onChange={this.changeHandler} value={this.state.text} placeholder="Sending msg ..."/>
+                        <button type="button"  onClick={this.sendMsg}>Send</button>
                     </form>
                 </div>
             </div>

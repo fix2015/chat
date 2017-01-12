@@ -23,6 +23,7 @@ var ChatApp = React.createClass({
 
 		return {users: [],
 			messages:[],
+			active:'',
 			login:false,
 			text: '',
 			locations:[],
@@ -58,7 +59,7 @@ var ChatApp = React.createClass({
 	_messageRecieve(message) {
 		var {messages} = this.state;
 		messages.push(message);
-		this.setState({messages});
+		this.setState({messages, active:message.user});
 	},
 
 	handleMessageSubmit(message) {
@@ -92,7 +93,7 @@ var ChatApp = React.createClass({
 		return (
 
 			<div className="row ">
-				<h3 class="text-center" >BOOTSTRAP CHAT EXAMPLE </h3>
+				<h3 class="text-center" >CHAT</h3>
 				<br /><br />
 				<div className={ !this.state.login ? 'col-md-8' :  'col-md-8 hidden' }>
 					<SetNameForm onSetName={this.handleSetName}/>
@@ -120,7 +121,11 @@ var ChatApp = React.createClass({
 							Map
 						</div>
 						<div className="panel-body">
-							<Map lat={this.state.mapCoordinates.lat} lng={this.state.mapCoordinates.lng} locations={this.state.locations} />
+							<Map
+								 active={this.state.active}
+								 lat={this.state.mapCoordinates.lat}
+								 lng={this.state.mapCoordinates.lng}
+								 locations={this.state.locations} />
 						</div>
 					</div>
 				</div>
