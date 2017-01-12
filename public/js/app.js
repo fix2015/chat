@@ -65,9 +65,7 @@ var ChatApp = React.createClass({
 		var messages = this.state.messages;
 
 		messages.push(message);
-
 		this.setState({ messages: messages, active: message.user });
-		debugger;
 	},
 
 	handleMessageSubmit: function handleMessageSubmit(message) {
@@ -214,13 +212,11 @@ var Map = React.createClass({
                 if (self.props.active == data.user) {
                     map.addMarker({
                         lat: data.location.lat,
-                        lng: data.location.lng,
-                        icon: 'http://www.google.com/mapfiles/dd-start.png'
-                    });
+                        lng: data.location.lng
+                    }).setAnimation(google.maps.Animation.BOUNCE);
                 }
             });
         }
-        debugger;
         map.fitLatLngBounds(bounds);
     },
 

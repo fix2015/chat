@@ -39,9 +39,8 @@ var Map = React.createClass({
                 if(self.props.active==data.user) {
                     map.addMarker({
                         lat: data.location.lat,
-                        lng: data.location.lng,
-                        icon: 'http://www.google.com/mapfiles/dd-start.png'
-                    });
+                        lng: data.location.lng
+                    }).setAnimation(google.maps.Animation.BOUNCE);
                 }
             })
         }
