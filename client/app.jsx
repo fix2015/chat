@@ -53,8 +53,7 @@ var ChatApp = React.createClass({
 
 	_initialize(data) {
 		var {users, name, locations} = data;
-		this.setState({users, user: name});
-		this.setState({locations : locations});
+		this.setState({users, user: name, locations : locations});
 	},
 
 	_messageWriting(data) {
@@ -70,7 +69,7 @@ var ChatApp = React.createClass({
 	_messageRecieve(message) {
 		var {messages} = this.state;
 		messages.push(message);
-		this.setState({messages, active:''});
+		this.setState({messages, active:'', locations: message.locations});
 	},
 
 	handleMessageSubmit(message) {
@@ -84,7 +83,7 @@ var ChatApp = React.createClass({
 		var oldName = this.state.user;
 		socket.emit('set:name', { name : newName, location: this.state.mapCoordinates}, (result) => {
 			if(!result) {
-				return alert('There was an error changing your name');
+				return false;
 			}
 			var {users} = this.state;
 			var index = users.indexOf(oldName);

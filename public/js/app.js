@@ -50,6 +50,8 @@ var ChatApp = React.createClass({
 		var userName = localStorage.getItem('userName');
 		if (userName) {
 			this.handleSetName(userName);
+		} else {
+			this.handleSetName('New user ..');
 		}
 	},
 
@@ -58,8 +60,7 @@ var ChatApp = React.createClass({
 		var name = data.name;
 		var locations = data.locations;
 
-		this.setState({ users: users, user: name });
-		this.setState({ locations: locations });
+		this.setState({ users: users, user: name, locations: locations });
 	},
 
 	_messageWriting: function _messageWriting(data) {
@@ -76,7 +77,7 @@ var ChatApp = React.createClass({
 		var messages = this.state.messages;
 
 		messages.push(message);
-		this.setState({ messages: messages, active: '' });
+		this.setState({ messages: messages, active: '', locations: message.locations });
 	},
 
 	handleMessageSubmit: function handleMessageSubmit(message) {

@@ -81,29 +81,26 @@ module.exports = function (socket) {
       lng: ''
     };
 
-  // send the new user their name and a list of users
   socket.emit('init', {
     name: name,
     users: userNames.get(),
     locations:  userNames.getLocation()
   });
 
-  // broadcast a user's message to other users
   socket.on('keypress:message', function (data) {
     socket.broadcast.emit('keypress:event', {
       user: data.user,
     });
   });
 
-  // broadcast a user's message to other users
   socket.on('send:message', function (data) {
     socket.broadcast.emit('send:message', {
       user: name,
-      text: data.text
+      text: data.text,
+      locations:  userNames.getLocation()
     });
   });
 
-  // validate a user's name change, and broadcast it on success
   socket.on('set:name', function (data, fn) {
     if (userNames.claim(data.name)) {
       var oldName = name;
@@ -116,7 +113,6 @@ module.exports = function (socket) {
     }
   });
 
-  // clean up when a user leaves, and broadcast it to other users
   socket.on('disconnect', function () {
     userNames.free(name);
   });
