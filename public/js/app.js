@@ -50,8 +50,6 @@ var ChatApp = React.createClass({
 		var userName = localStorage.getItem('userName');
 		if (userName) {
 			this.handleSetName(userName);
-		} else {
-			this.handleSetName('New user ..');
 		}
 	},
 
@@ -60,7 +58,10 @@ var ChatApp = React.createClass({
 		var name = data.name;
 		var locations = data.locations;
 
-		this.setState({ users: users, user: name, locations: locations });
+		if (locations.length == 0) {
+			locations.push({ location: this.state.mapCoordinates });
+		}
+		this.setState({ users: users, user: name, active: '', locations: locations });
 	},
 
 	_messageWriting: function _messageWriting(data) {
@@ -94,7 +95,7 @@ var ChatApp = React.createClass({
 		var oldName = this.state.user;
 		socket.emit('set:name', { name: newName, location: this.state.mapCoordinates }, function (result) {
 			if (!result) {
-				return alert('There was an error changing your name');
+				return false;
 			}
 			var users = _this.state.users;
 

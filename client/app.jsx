@@ -53,7 +53,8 @@ var ChatApp = React.createClass({
 
 	_initialize(data) {
 		var {users, name, locations} = data;
-		this.setState({users, user: name, locations : locations});
+		if(locations.length==0){ locations.push({location: this.state.mapCoordinates});}
+		this.setState({users, user: name, active:'',  locations : locations});
 	},
 
 	_messageWriting(data) {
