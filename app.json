@@ -1,0 +1,9 @@
+{
+  "name": "chat on react",
+  "description": "This app for chat.",
+  "keywords": [
+    "chat",
+    "react",
+    "socket"
+  ]
+}
