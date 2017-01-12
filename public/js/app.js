@@ -63,7 +63,13 @@ var ChatApp = React.createClass({
 	},
 
 	_messageWriting: function _messageWriting(data) {
-		this.setState({ active: data.user });
+		if (this.state.active == '') {
+			this.setState({ active: data.user });
+			var self = this;
+			setTimeout(function () {
+				self.setState({ active: '' });
+			}, 2000);
+		}
 	},
 
 	_messageRecieve: function _messageRecieve(message) {
@@ -184,6 +190,7 @@ ReactDOM.render(React.createElement(ChatApp, null), document.getElementById('app
 'use strict';
 
 var React = require('react');
+var markers = [];
 
 var Map = React.createClass({
     displayName: 'Map',
@@ -196,10 +203,6 @@ var Map = React.createClass({
     componentDidUpdate: function componentDidUpdate() {
         var self = this;
         var bounds = [];
-        var markers = [];
-
-        this.lastLat = this.props.lat;
-        this.lastLng = this.props.lng;
 
         var map = new GMaps({
             div: '#map',
@@ -209,7 +212,7 @@ var Map = React.createClass({
             height: '325px',
             zoom: 5
         });
-
+        this.removeMarkers(markers);
         this.props.locations.forEach(function (data, key) {
             markers.push(map.addMarker({
                 lat: data.location.lat,
@@ -227,17 +230,22 @@ var Map = React.createClass({
                     }).setAnimation(google.maps.Animation.BOUNCE);
                 }
             });
-        } else {
-            this.props.locations.forEach(function (data, key) {
-                if (self.props.active == data.user) {
-                    map.addMarker({
-                        lat: data.location.lat,
-                        lng: data.location.lng
-                    }).setAnimation(null);
-                }
-            });
         }
         map.fitLatLngBounds(bounds);
+    },
+
+    disampleAnimationMarkers: function disampleAnimationMarkers(markers) {
+        for (var i = 0; i < markers.length; i++) {
+            if (markers[i].getAnimation() !== null) {
+                markers[i].setAnimation(null);
+            }
+        }
+    },
+
+    removeMarkers: function removeMarkers(markers) {
+        for (var i = 0; i < markers.length; i++) {
+            markers[i].setMap(null);
+        }
     },
 
     render: function render() {

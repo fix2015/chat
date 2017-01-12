@@ -58,7 +58,13 @@ var ChatApp = React.createClass({
 	},
 
 	_messageWriting(data) {
-		this.setState({active:data.user});
+		if(this.state.active==''){
+			this.setState({active:data.user});
+			var self = this;
+			setTimeout(function () {
+				self.setState({active:''});
+			},2000)
+		}
 	},
 
 	_messageRecieve(message) {
