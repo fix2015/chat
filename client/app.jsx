@@ -117,7 +117,7 @@ var ChatApp = React.createClass({
 				<div className="col-md-4">
 					<div className="panel panel-primary">
 						<div className="panel-heading">
-							ONLINE USERS
+							Map
 						</div>
 						<div className="panel-body">
 							<Map lat={this.state.mapCoordinates.lat} lng={this.state.mapCoordinates.lng} locations={this.state.locations} />
