@@ -58,6 +58,14 @@ var userNames = (function () {
     
     return locations;
   };
+  setLocationPos = function (data) {
+    locations.forEach(function(location, key){
+      if(location.user == data.user){
+        location.location.lat = data.mapCoordinates.lat;
+        location.location.lng = data.mapCoordinates.lng
+      }
+    })
+  }
 
   var free = function (name) {
     if (names[name]) {
@@ -71,7 +79,8 @@ var userNames = (function () {
     get: get,
     getGuestName: getGuestName,
     getLocation: getLocation,
-    setLocation: setLocation
+    setLocation: setLocation,
+    setLocationPos: setLocationPos
   };
 }());
 
@@ -86,6 +95,13 @@ module.exports = function (socket) {
     name: name,
     users: userNames.get(),
     locations:  userNames.getLocation()
+  });
+
+  socket.on('location:position', function (data, user) {
+    userNames.setLocationPos(data);
+    socket.broadcast.emit('location:event', {
+      locations: userNames.getLocation()
+    });
   });
 
   socket.on('keypress:message', function (data) {

@@ -34,17 +34,21 @@ var ChatApp = React.createClass({
 	},
 
 	showPosition(position) {
-		this.setState({
-			mapCoordinates: {
-				lat: position.coords.latitude,
-				lng:position.coords.longitude
-			}})
+		var mapCoordinates =  {
+			lat: position.coords.latitude,
+			lng:position.coords.longitude
+		}
+		var locations = [];
+		if(locations.length==0){ locations.push({location: this.state.mapCoordinates});}
+		this.setState({mapCoordinates:mapCoordinates, locations : locations})
+		socket.emit('location:position', {mapCoordinates, user: this.state.user});
 	},
 
 	componentDidMount() {
 		socket.on('init', this._initialize);
 		socket.on('send:message', this._messageRecieve);
 		socket.on('keypress:event', this._messageWriting);
+		socket.on('location:event', this._newPosition);
 		var userName = localStorage.getItem('userName');
 		if(userName){
 			this.handleSetName(userName);
@@ -57,6 +61,9 @@ var ChatApp = React.createClass({
 		this.setState({users, user: name, active:'',  locations : locations});
 	},
 
+	_newPosition(locations) {
+		this.setState({locations : locations});
+	},
 	_messageWriting(data) {
 		if(this.state.active==''){
 			this.setState({active:data.user});
